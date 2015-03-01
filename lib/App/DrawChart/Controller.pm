@@ -1,31 +1,31 @@
 package App::DrawChart::Controller;
 use strict;
 use warnings;
-
+use Digest::MD5 'md5_hex';
 use Amon2::Lite;
 
 sub _warn { warn "\e[31m@_\e[m\n" }
 
 my $app = sub {
-    my $csv = shift;
+    my @csv = @_;
+    @csv = map { [ $_, md5_hex($_) ] } @csv;
 
     get "/" => sub {
         my $c = shift;
         $c->render('index.tt', {
-            csv_url => $csv =~ /^http/i ? $csv : "/data.csv",
+            csv => \@csv,
             dygraphs_url => $ENV{PERL_DYGRAPHS_PATH}
                           ? "/dygraph-combined.js"
                           : "//cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.0/dygraph-combined.js",
-
         });
     };
 
-    if ($csv !~ /^http/i) {
-        get "/data.csv" => sub {
+    for my $csv (@csv) {
+        get "/$csv->[1].csv" => sub {
             my $c = shift;
             my $fh;
-            open $fh, "<", $csv
-                or do { undef $fh; _warn "Cannot read $csv: $!" };
+            open $fh, "<", $csv->[0]
+                or do { undef $fh; _warn "Cannot read $csv->[0]: $!" };
 
             my $res = $c->create_response(200);
             $res->content_type("text/csv");
@@ -61,11 +61,10 @@ my $app = sub {
 };
 
 sub init {
-    my ($class, $csv) = @_;
-    $app->($csv);
+    my ($class, @csv) = @_;
+    $app->(@csv);
     $class;
 }
-
 
 1;
 __DATA__
@@ -79,30 +78,38 @@ __DATA__
   <style>
   body {
     width: 100%;
+    margin: 0 0;
     font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
   }
-  h1 {
+  div#wrapper {
+    width: 90%;
     margin: 0 auto;
-    text-align: center;
+  }
+  h2 {
+    margin: 0 auto;
     padding: 20px 0;
   }
-  div#chart {
+  div.chart {
     margin: 0 auto;
   }
   </style>
-
 </head>
 <body>
-<h1>chart</h1>
-
-<div id="chart" style="width: 80%;">
+<div id="wrapper">
+[% FOREACH c IN csv %]
+    <h2>[% c.0 %]</h2>
+    <div class="chart" id="[% c.1 %]" style="width: 100%;"></div>
+[% END %]
 </div>
 <script>
 (function () {
-  var div = document.getElementById("chart");
-  var graph = new Dygraph(div, "[% csv_url %]", {
-    strokeWidth: 2
-  });
+  var elems = document.getElementsByClassName("chart");
+  var charts = [];
+  for (var i = 0; i < elems.length; i++) {
+    charts.push(new Dygraph(elems[i], "/" + elems[i].id + ".csv", {
+      strokeWidth: 2
+    }));
+  }
 } ());
 </script>
 </body>

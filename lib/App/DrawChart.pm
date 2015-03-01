@@ -16,10 +16,10 @@ sub draw {
 
     my $runner = Plack::Runner->new;
     $runner->parse_options("--port", 5555, @argv);
-    my $csv = shift @{$runner->{argv}} # yes, evil
+    my @csv = @{$runner->{argv}} # yes, evil
         or do { warn "Missing csv file.\n"; pod2usage(1) };
 
-    my $app = App::DrawChart::Controller->init($csv)->to_app;
+    my $app = App::DrawChart::Controller->init(@csv)->to_app;
     $runner->run($app);
 }
 
