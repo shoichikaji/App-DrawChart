@@ -55,6 +55,13 @@ App::DrawChart - draw chart for csv files
 App::DrawChart draws chart for csv files,
 which uses L<http://dygraphs.com|http://dygraphs.com>.
 
+=head1 TIPS
+
+=head2 how often git commit?
+
+    > git log --format='%ad' --date=short | sort | uniq -c | perl -anle 'BEGIN { print "Date,commit" } print join ",", reverse @F' > commit.csv
+    > draw-chart commit.csv
+
 =head1 LICENSE
 
 Copyright (C) Shoichi Kaji.
