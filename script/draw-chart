@@ -1,0 +1,24 @@
+#!perl
+use strict;
+use warnings;
+use utf8;
+use App::DrawChart;
+
+App::DrawChart->draw(@ARGV);
+
+__END__
+
+=head1 SYNOPSIS
+
+    > draw-chart file.csv
+
+    Options:
+    -h, --help   show this help
+
+    You can specifiy plackup options, eg:
+    -p, --port   http server port, default: 5555
+    -h, --host   http server host, default: 0.0.0.0 (all host)
+
+    type `plackup --help` for more details.
+
+=cut
