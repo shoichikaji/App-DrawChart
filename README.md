@@ -1,6 +1,6 @@
 # NAME
 
-App::DrawChart - draw chart for csv files
+App::DrawChart - draw time-series chart for csv files
 
 # SYNOPSIS
 
@@ -20,7 +20,7 @@ App::DrawChart - draw chart for csv files
 
 # DESCRIPTION
 
-App::DrawChart draws chart for csv files,
+App::DrawChart draws time-series chart for csv files,
 which uses [http://dygraphs.com](http://dygraphs.com).
 
 # TIPS

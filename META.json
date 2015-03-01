@@ -1,5 +1,5 @@
 {
-   "abstract" : "draw chart for csv files",
+   "abstract" : "draw time-series chart for csv files",
    "author" : [
       "Shoichi Kaji <skaji@cpan.org>"
    ],
