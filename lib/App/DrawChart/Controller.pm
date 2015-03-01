@@ -50,7 +50,7 @@ my $app = sub {
         get "/dygraph-combined.js.map" => sub {
             my $c = shift;
             my $fh;
-            open $fh, "<", "$path.map"; # don't check
+            open $fh, "<", "$path.map" or do { undef $fh }; # don't check
             my $res = $c->create_response(200);
             $res->content_type("application/json");
             $res->content_length($fh ? -s $fh : 0);
